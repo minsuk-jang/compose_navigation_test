@@ -1,53 +1,41 @@
 package com.example.navigationtest.ui
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
 fun FirstScreen(
-    onClick: () -> Unit = {}
+    onNext: () -> Unit = {}
 ) {
-    val vm: FirstScreenViewModel = viewModel()
-    val lifecycle = LocalLifecycleOwner.current
+    val owner = checkNotNull(LocalViewModelStoreOwner.current)
+    val savedStateOwner = LocalSavedStateRegistryOwner.current
 
-    DisposableEffect(key1 = Unit) {
-        val observer = LifecycleEventObserver { _, event ->
-//            Log.e("jms8732", "FirstScreen lifecycle: $event")
-        }
-        lifecycle.lifecycle.addObserver(observer)
+    val viewModel: FirstScreenViewModel = viewModel(
+        factory = FirstScreenViewModelFactory(savedStateOwner),
+        viewModelStoreOwner = owner
+    )
 
-        onDispose {
-            lifecycle.lifecycle.removeObserver(observer)
-        }
-    }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Magenta),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { onClick() }) {
+        Button(onClick = { onNext() }) {
             Text(text = "First Screen")
         }
     }
 }
+

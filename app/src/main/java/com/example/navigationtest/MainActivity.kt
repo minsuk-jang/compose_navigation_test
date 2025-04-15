@@ -1,37 +1,56 @@
 package com.example.navigationtest
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.navigationtest.ui.HomeGroup
+import com.example.navigationtest.ui.FirstScreen
+import com.example.navigationtest.ui.SecondScreen
 import com.example.navigationtest.ui.theme.NavigationTestTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         setContent {
             NavigationTestTheme(darkTheme = false) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "home"
+                        startDestination = "first"
                     ) {
                         composable(
-                            route = "home"
+                            route = "first"
+                        ) {
+
+                            LaunchedEffect(key1 = Unit) {
+                                Log.e(
+                                    "jms8732",
+                                    "in LaunchedEffected: ${it.savedStateHandle.hashCode()}"
+                                )
+                            }
+
+                            FirstScreen {
+                                navController.navigate("second")
+                            }
+                        }
+
+                        composable(
+                            route = "second"
                         ){
-                            HomeGroup(
-                                modifier = Modifier.padding(innerPadding)
-                            )
+                            LaunchedEffect(key1 = Unit) {
+                                Log.e("jms8732", "in composable: ${it.savedStateHandle.hashCode()} ")
+                            }
+
+                            SecondScreen()
                         }
                     }
 
